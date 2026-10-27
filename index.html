@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private proffesional Login Website</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+
+.scene {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 25px;
+    padding: 25px;
+    background: #000;
+}
+ 
+.lamp-area {
+    position: relative;
+    width: 44%;
+    height: 580px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.light {
+    position: absolute;
+    top: 140px;
+    width: 430px;
+    height: 420px;
+    background: linear-gradient(
+        to bottom,
+        #fde006,
+        #6d631aea 50%,
+        transparent
+        
+    );
+    clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+    filter: blur(12px);
+    opacity: 0;
+    transition: opacity .6s;
+    pointer-events: none;
+}
+
+.lamp {
+    position: absolute;
+    top: 100px;
+    width: 180px;
+    height: 70px;
+    background: linear-gradient(#535151, #080808);
+    border-radius: 100px 100px 10px 10px;
+    box-shadow: 0 0 15px #ffe00015;
+    z-index: 3;
+
+}
+
+.bulb {
+    position: absolute;
+    bottom: -5px;
+    left: 22px;
+    width: 136px;
+    height: 9px;
+    border-radius: 50%;
+    background: #222;
+    transition: .4s;
+}
+
+.stand {
+    position: absolute;
+    top: 165px;
+    width: 5px;
+    height: 340px;
+    background: #262625;
+}
+
+.base {
+    position: absolute;
+    top: 490px;
+    width: 130px;
+    height: 18px;
+    border-radius: 50%;
+    background: #151515;
+}
+
+.cord {
+    position: absolute;
+    top: 165px;
+    left: calc(50% + 65px);
+    width: 4px;
+    height: 125px;
+    background: #eded1e;
+    box-shadow: 0 0 8px #eded06,
+                0 0 18px #e3e304,
+                0 0 32px #f0f005;
+    z-index: 10;
+    cursor: grab;
+    touch-action: none;
+    transition: height .2s;
+    
+
+}
+
+.knob {
+    position: absolute;
+    bottom: -17px;
+    left: -7px;
+    width: 18px;
+    height: 35px;
+    border-radius: 7px;
+    background: linear-gradient(90deg, #deba16, #fff16a, #d3a900);
+    box-shadow: 0 0 12px #5f5920,
+                0 0 28px #423b1b;
+                border: 4px solid yellow;
+}
+
+.hint {
+    position: absolute;
+    top: 325px;
+    color: #efeee9;
+    font-size: 12px;
+    letter-spacing: 2px;
+    animation: blink 1.5s infinite;
+}
+
+/* @keyframes blink {
+    50% { opacity: .4; }
+} */
+
+@keyframes blink {
+    0%{
+        opacity:1;
+    }
+    50%{
+        opacity:0;
+    }
+    100%{
+        opacity:1;
+    }
+}
+
+body.open .light {
+    opacity: .8;
+}
+
+body.open .bulb {
+    background: #fff8ad;
+    box-shadow: 0 0 10 9px #ffe56b,
+                0 0 55px 20px #f0c712;
+}
+
+body.open .lamp {
+    box-shadow: 0 0 35px #ffdb3540;
+}
+
+.login-panel {
+    width: min(500px, 48%);
+    padding: 40px 32px;
+    background: #101010;
+    border: 1px solid #3a350b;
+    border-radius: 28px;
+    box-shadow: 0 0 35px #ffe50008;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(70px) scale(.95);
+    transition: .6s ease;
+    pointer-events: none;
+}
+
+body.open .login-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) scale(1);
+    pointer-events: auto;
+}
+
+h1 {
+    text-align: center;
+    font-size: clamp(30px, 4vw, 43px);
+    margin-bottom: 18px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 35px;
+}
+
+.field {
+    margin-bottom: 20px;
+}
+
+.field input {
+    width: 100%;
+    height: 62px;
+    border: 1px solid #282820;
+    border-radius: 18px;
+    background: #080808;
+    color: white;
+    padding: 0 18px;
+    font-size: 15px;
+    outline: none;
+    transition: .3s;
+}
+
+.field input::placeholder {
+    color: #aaa;
+}
+
+.field input.input-valid {
+    border: 2px solid #00e676;
+    box-shadow: 0 0 12px #00e67620;
+}
+
+.field input.input-invalid {
+    border: 2px solid #ff3333;
+    box-shadow: 0 0 12px #ff333320;
+}
+
+.field-error {
+    display: block;
+    color: #ff3333;
+    font-size: 12px;
+    margin: 6px 4px 0;
+}
+
+.field-success {
+    display: block;
+    color: #00e676;
+    font-size: 12px;
+    margin: 6px 4px 0;
+}
+
+.field input:focus {
+    border-color: #ffe500;
+    box-shadow: 0 0 14px #ffe50020;
+}
+
+.signin {
+    width: 100%;
+    height: 62px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 18px;
+    background: #ffe000;
+    color: #000;
+    font-size: 19px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.signin:hover {
+    background: #fff16b;
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px #ffe50055;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0;
+    color: #f7eb13;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    height: 3px;
+    background: #fde50c;
+    flex: 1;
+}
+
+.message {
+    color: #ffe500;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.success-box {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+    animation: appear .5s ease;
+}
+
+.success-check {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 22px;
+    border: 3px solid #ffe000;
+    border-radius: 50%;
+    color: #ffe000;
+    font-size: 46px;
+    box-shadow: 0 0 25px #ffe00044;
+}
+
+.success-box h2 {
+    color: #ffe000;
+    margin-bottom: 12px;
+    font-size: 25px;
+}
+
+.success-box p {
+    color: #ccc;
+    line-height: 1.6;
+}
+
+@keyframes appear {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+    .scene {
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0;
+        padding: 10px 16px 30px;
+    }
+
+    .lamp-area {
+        width: 100%;
+        height: 285px;
+        flex-shrink: 0;
+    }
+
+    .lamp {
+        top: 30px;
+        transform: scale(.72);
+    }
+
+    .stand {
+        top: 80px;
+        height: 175px;
+    }
+
+    .base {
+        top: 245px;
+        width: 95px;
+    }
+
+    .light {
+        top: 65px;
+        width: 280px;
+        height: 220px;
+    }
+
+    .cord {
+        top: 80px;
+        left: calc(50% + 47px);
+        height: 80px;
+    }
+
+    .hint {
+        top: 180px;
+        font-size: 10px;
+    }
+
+    .login-panel {
+        width: 100%;
+        max-width: 460px;
+        padding: 28px 20px;
+        border-radius: 22px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    .subtitle {
+        margin-bottom: 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+
+    <div class="lamp-area">
+        <div class="light"></div>
+
+        <div class="lamp">
+            <div class="bulb"></div>
+        </div>
+
+        <div class="stand"></div>
+        <div class="base"></div>
+
+        <div class="cord" id="cord" title="Pull down">
+            <div class="knob"></div>
+        </div>
+
+        <div class="hint">Button Op Down ↓</div>
+    </div>
+
+    <div class="login-panel">
+
+        <div id="loginContent">
+            <h1>Welcome Back</h1>
+
+            <p class="subtitle">
+                Enter your details to access your website
+            </p>
+
+            <form id="loginForm">
+                <div class="field">
+                    <input
+                        id="userId"
+                        type="text"
+                        placeholder="Email Or Mobile Number"
+                        autocomplete="username"
+                        required
+                    >
+                <small id="userIdError" class="field-error"></small>
+                </div>
+
+                <div class="field">
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Enter Password"
+                        autocomplete="current-password"
+                        required
+                    >
+                <small id="passwordError" class="field-error"></small>
+                </div>
+
+                <button class="signin" type="submit">
+                    Login
+                </button>
+
+                <p class="message" id="message" role="status"></p>
+            </form>
+
+            <div class="divider">PRIVATE WEBSITE LOGIN</div>
+        </div>
+
+        <div class="success-box" id="successBox" role="status">
+            <div class="success-check">✓</div>
+            <h2>Login Successfully!</h2>
+            <p>Opening your Sarkari-Portal Website</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+"use strict";
+
+const allowedEmail = "roshankumar198888888@gmail.com";
+const allowedPhone = "8505815996";
+const allowedPassword = "roshan@321";
+
+const websiteUrl ="https://roshankumar830.github.io/sarkari-portal/";
+
+const cord = document.getElementById("cord");
+let dragging = false;
+let startY = 0;
+let pulled = false;
+
+cord.addEventListener("pointerdown", function(event) {
+    dragging = true;
+    pulled = false;
+    startY = event.clientY;
+    cord.setPointerCapture(event.pointerId);
+});
+
+cord.addEventListener("pointermove", function(event) {
+    if (!dragging) return;
+
+    const distance = Math.max(
+        0,
+        Math.min(100, event.clientY - startY)
+    );
+
+    cord.style.height =
+        (window.innerWidth <= 760 ? 80 : 125) + distance + "px";
+
+    if (distance >= 35) pulled = true;
+});
+
+function releaseCord() {
+    if (!dragging) return;
+
+    dragging = false;
+    cord.style.height =
+        window.innerWidth <= 760 ? "80px" : "125px";
+
+    if (pulled) {
+        document.body.classList.toggle("open");
+    }
+}
+
+cord.addEventListener("pointerup", releaseCord);
+cord.addEventListener("pointercancel", releaseCord);
+
+const loginForm = document.getElementById("loginForm");
+const userIdInput = document.getElementById("userId");
+const passwordInput = document.getElementById("password");
+const userIdError = document.getElementById("userIdError");
+const passwordError = document.getElementById("passwordError");
+const message = document.getElementById("message");
+
+function validateUserId() {
+    const userId = userIdInput.value.trim().toLowerCase();
+    const validId =
+        userId === allowedEmail.toLowerCase() ||
+        userId === allowedPhone;
+
+    if (userId === "") {
+        userIdInput.classList.remove("input-valid");
+        userIdInput.classList.add("input-invalid");
+        userIdError.className = "field-error";
+        userIdError.textContent = "Please enter your Email or Mobile Number!";
+        return false;
+    }
+
+    if (!validId) {
+        userIdInput.classList.remove("input-valid");
+        userIdInput.classList.add("input-invalid");
+        userIdError.className = "field-error";
+        userIdError.textContent = "Incorrect Email or Mobile Number!";
+        return false;
+    }
+
+    userIdInput.classList.remove("input-invalid");
+    userIdInput.classList.add("input-valid");
+    userIdError.className = "field-success";
+    userIdError.textContent = "Email or Mobile Number is correct!";
+    return true;
+}
+
+function validatePassword() {
+    const password = passwordInput.value;
+
+    if (password === "") {
+        passwordInput.classList.remove("input-valid");
+        passwordInput.classList.add("input-invalid");
+        passwordError.className = "field-error";
+        passwordError.textContent = "Please enter your Password!";
+        return false;
+    }
+
+    if (password !== allowedPassword) {
+        passwordInput.classList.remove("input-valid");
+        passwordInput.classList.add("input-invalid");
+        passwordError.className = "field-error";
+        passwordError.textContent = "Incorrect Password!";
+        return false;
+    }
+
+    passwordInput.classList.remove("input-invalid");
+    passwordInput.classList.add("input-valid");
+    passwordError.className = "field-success";
+    passwordError.textContent = "Password is correct!";
+    return true;
+}
+
+userIdInput.addEventListener("input", function() {
+    message.textContent = "";
+    validateUserId();
+});
+
+passwordInput.addEventListener("input", function() {
+    message.textContent = "";
+    validatePassword();
+});
+
+loginForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const validId = validateUserId();
+    const validPassword = validatePassword();
+
+    if (validId && validPassword) {
+        message.textContent = "";
+        document.getElementById("loginContent").style.display = "none";
+        document.getElementById("successBox").style.display = "block";
+
+        setTimeout(function() {
+            window.location.href = websiteUrl;
+        }, 1800);
+
+    } else {
+        message.style.color = "#ff7777";
+        message.textContent =
+            "Please fill both fields correctly and try again!";
+    }
+});
+</script>
+
+</body>
+</html>
